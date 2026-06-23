@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习管家</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div id="app">
+        <!-- 登录页面 -->
+        <div id="login-page" class="page">
+            <div class="login-container">
+                <h1>学习管家</h1>
+                <p>基于AI的个性化学习系统</p>
+                <form id="login-form">
+                    <input type="text" id="username" placeholder="用户名" required>
+                    <input type="password" id="password" placeholder="密码" required>
+                    <button type="submit">登录</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 主页面 -->
+        <div id="main-page" class="page hidden">
+            <!-- 头部导航 -->
+            <header class="header">
+                <div class="logo">学习管家</div>
+                <nav class="nav">
+                    <a href="#" data-page="dashboard" class="active">仪表盘</a>
+                    <a href="#" data-page="plans">学习计划</a>
+                    <a href="#" data-page="calendar">日历</a>
+                    <a href="#" data-page="profile">个人中心</a>
+                </nav>
+                <div class="user-info">
+                    <div class="learner-switch" id="learner-switch">
+                        <span id="current-learner-name">👤</span>
+                        <select id="learner-select" class="hidden">
+                            <!-- 动态加载学习者列表 -->
+                        </select>
+                    </div>
+                    <span id="user-name"></span>
+                    <button id="logout-btn">退出</button>
+                </div>
+            </header>
+
+            <!-- 仪表盘页面 -->
+            <div id="dashboard-page" class="content-page">
+                <div class="dashboard">
+                    <div class="stats-cards">
+                        <div class="stat-card">
+                            <h3>进行中计划</h3>
+                            <div class="stat-number" id="active-plans-count">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>已完成计划</h3>
+                            <div class="stat-number" id="completed-plans-count">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>今日学习</h3>
+                            <div class="stat-number" id="today-learning">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>连续打卡</h3>
+                            <div class="stat-number" id="streak-days">0</div>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+                        <h2>快速操作</h2>
+                        <button id="create-plan-btn" class="btn-primary">创建学习计划</button>
+                        <button id="view-plans-btn" class="btn-secondary">查看所有计划</button>
+                    </div>
+
+                    <div class="recent-plans">
+                        <h2>最近计划</h2>
+                        <div id="recent-plans-list" class="plans-list">
+                            <!-- 动态加载 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 学习计划页面 -->
+            <div id="plans-page" class="content-page hidden">
+                <div class="plans-container">
+                    <div class="plans-header">
+                        <h2>学习计划</h2>
+                        <button id="new-plan-btn" class="btn-primary">新建计划</button>
+                    </div>
+                    <div id="plans-list" class="plans-grid">
+                        <!-- 动态加载 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 日历页面 -->
+            <div id="calendar-page" class="content-page hidden">
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button id="prev-month">&lt;</button>
+                        <h2 id="current-month">2024年1月</h2>
+                        <button id="next-month">&gt;</button>
+                    </div>
+                    <div class="calendar-grid">
+                        <div class="weekday">日</div>
+                        <div class="weekday">一</div>
+                        <div class="weekday">二</div>
+                        <div class="weekday">三</div>
+                        <div class="weekday">四</div>
+                        <div class="weekday">五</div>
+                        <div class="weekday">六</div>
+                        <!-- 动态生成日期 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 个人中心页面 -->
+            <div id="profile-page" class="content-page hidden">
+                <div class="profile-container">
+                    <h2>个人中心</h2>
+
+                    <!-- 学习者管理 -->
+                    <div class="learners-section">
+                        <div class="section-header">
+                            <h3>学习者管理</h3>
+                            <button id="add-learner-btn" class="btn btn-primary btn-sm">+ 添加学习者</button>
+                        </div>
+                        <div id="learners-list" class="learners-list">
+                            <!-- 动态加载学习者列表 -->
+                        </div>
+                    </div>
+
+                    <div class="profile-form">
+                        <h3>账户信息</h3>
+                        <div class="form-group">
+                            <label>用户名</label>
+                            <input type="text" id="profile-username" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>昵称</label>
+                            <input type="text" id="profile-nickname">
+                        </div>
+                        <div class="form-group">
+                            <label>真实姓名</label>
+                            <input type="text" id="profile-real-name">
+                        </div>
+                        <div class="form-group">
+                            <label>年龄</label>
+                            <input type="number" id="profile-age">
+                        </div>
+                        <div class="form-group">
+                            <label>职业</label>
+                            <input type="text" id="profile-occupation">
+                        </div>
+                        <div class="form-group">
+                            <label>学习目标</label>
+                            <textarea id="profile-learning-goal"></textarea>
+                        </div>
+                        <button id="save-profile-btn" class="btn-primary">保存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 添加学习者弹窗 -->
+        <div id="add-learner-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>添加学习者</h2>
+                    <button class="close-btn" onclick="hideModal('add-learner-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-learner-form">
+                        <div class="form-group">
+                            <label>姓名 *</label>
+                            <input type="text" id="learner-name" placeholder="例如：小明" required>
+                        </div>
+                        <div class="form-group">
+                            <label>年龄</label>
+                            <input type="number" id="learner-age" placeholder="可选">
+                        </div>
+                        <div class="form-group">
+                            <label>年级/阶段</label>
+                            <input type="text" id="learner-grade" placeholder="例如：小学三年级 / 初中">
+                        </div>
+                        <div class="form-group">
+                            <label>关系</label>
+                            <select id="learner-relation">
+                                <option value="self">自己</option>
+                                <option value="child">孩子</option>
+                                <option value="spouse">配偶</option>
+                                <option value="parent">父母</option>
+                                <option value="other">其他</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>学习风格</label>
+                            <select id="learner-style">
+                                <option value="visual">视觉型（喜欢看图、视频）</option>
+                                <option value="auditory">听觉型（喜欢听讲、讨论）</option>
+                                <option value="kinesthetic">动觉型（喜欢实践、操作）</option>
+                                <option value="reading">阅读型（喜欢读书、文字）</option>
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" onclick="hideModal('add-learner-modal')">取消</button>
+                            <button type="submit" class="btn-primary">添加</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 创建计划弹窗 -->
+        <div id="create-plan-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>创建学习计划</h2>
+                    <button type="button" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="create-plan-form">
+                        <div class="form-group">
+                            <label>学习主题</label>
+                            <input type="text" id="plan-topic" placeholder="例如：六西格玛统计" required>
+                        </div>
+                        <div class="form-group">
+                            <label>学习天数</label>
+                            <input type="number" id="plan-days" min="1" max="365" value="30" required>
+                        </div>
+                        <div class="form-group">
+                            <label>学习模式</label>
+                            <select id="plan-mode">
+                                <option value="student">学生模式（侧重理论）</option>
+                                <option value="work">工作模式（侧重实践）</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>学习者</label>
+                            <select id="plan-learner">
+                                <option value="">-- 选择学习者 --</option>
+                                <!-- 动态加载 -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>计划描述</label>
+                            <textarea id="plan-description" placeholder="可选：描述你的学习目标"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancel-create">取消</button>
+                            <button type="submit" class="btn-primary">创建</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 学习内容页面 -->
+        <div id="learning-page" class="page hidden">
+            <div class="learning-container">
+                <div class="learning-header">
+                    <button id="back-btn" class="btn btn-secondary">返回</button>
+                    <h1 id="learning-title"></h1>
+                    <div class="learning-actions">
+                        <button id="master-btn" class="btn btn-success">已掌握</button>
+                        <button id="retry-btn" class="btn btn-warning">重新学习</button>
+                    </div>
+                </div>
+                <div class="learning-content">
+                    <div id="content-html"></div>
+                </div>
+                <div class="learning-sidebar">
+                    <div class="question-box">
+                        <h3>有问题？</h3>
+                        <textarea id="question-input" placeholder="输入你的问题..."></textarea>
+                        <button id="ask-btn" class="btn btn-primary">提问</button>
+                        <div id="question-history"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 考试页面 -->
+        <div id="exam-page" class="page hidden">
+            <div class="exam-container">
+                <div class="exam-header">
+                    <button id="exam-back-btn" class="btn btn-secondary">返回</button>
+                    <h1 id="exam-title"></h1>
+                    <div class="exam-actions">
+                        <button id="export-exam-btn" class="btn btn-secondary hidden">导出试卷</button>
+                        <button id="submit-exam-btn" class="btn btn-primary hidden">提交答案</button>
+                    </div>
+                </div>
+                <div id="exam-content"></div>
+            </div>
+        </div>
+
+        <!-- 移动端底部导航 -->
+        <nav class="bottom-nav">
+            <div class="bottom-nav-items">
+                <button class="bottom-nav-item active" data-page="dashboard">
+                    <span class="icon">📊</span>
+                    <span>仪表盘</span>
+                </button>
+                <button class="bottom-nav-item" data-page="plans">
+                    <span class="icon">📚</span>
+                    <span>计划</span>
+                </button>
+                <button class="bottom-nav-item" data-page="calendar">
+                    <span class="icon">📅</span>
+                    <span>日历</span>
+                </button>
+                <button class="bottom-nav-item" data-page="profile">
+                    <span class="icon">👤</span>
+                    <span>我的</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
